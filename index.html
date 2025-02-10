@@ -66,8 +66,8 @@
       ctx.stroke();
 
       // Calculate Circle A position on the outside of Circle B
-      const xA = centerX + (radiusB + radiusA) * Math.cos(angle);
-      const yA = centerY + (radiusB + radiusA) * Math.sin(angle);
+      const xA = centerX - (radiusB + radiusA) * Math.cos(angle);
+      const yA = centerY - (radiusB + radiusA) * Math.sin(angle);
 
       // Draw Circle A
       ctx.beginPath();
