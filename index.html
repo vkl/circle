@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rolling Circle Visualization</title>
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      font-family: Arial, sans-serif;
+    }
+    canvas {
+      border: 1px solid #000;
+      border-radius: 16px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    .controls {
+      margin-top: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="canvas" width="600" height="600"></canvas>
+  <div class="controls">
+    <button id="toggleButton">Start Rolling</button>
+    <p id="rotationCount">Rotations: 0</p>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const toggleButton = document.getElementById('toggleButton');
+    const rotationCountDisplay = document.getElementById('rotationCount');
+
+    const radiusA = 50; // 1 unit = 50px
+    const radiusB = 150; // 3 units = 150px
+    const centerX = 300;
+    const centerY = 300;
+    let angle = 0;
+    let previousAngle = 0;
+    let rotationCount = 0;
+    let isRolling = false;
+    let interval;
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Draw Circle B
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, radiusB, 0, 2 * Math.PI);
+      ctx.strokeStyle = '#000';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      // Calculate Circle A position
+      const xA = centerX + (radiusB - radiusA) * Math.cos(angle);
+      const yA = centerY + (radiusB - radiusA) * Math.sin(angle);
+
+      // Draw Circle A
+      ctx.beginPath();
+      ctx.arc(xA, yA, radiusA, 0, 2 * Math.PI);
+      ctx.strokeStyle = '#007bff';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      // Draw mark on Circle A
+      const markX = xA + radiusA * Math.cos(-angle);
+      const markY = yA + radiusA * Math.sin(-angle);
+      ctx.beginPath();
+      ctx.arc(markX, markY, 5, 0, 2 * Math.PI);
+      ctx.fillStyle = '#ff0000';
+      ctx.fill();
+    }
+
+    function startRolling() {
+      interval = setInterval(() => {
+        angle += 0.05;
+        draw();
+
+        if (angle - previousAngle >= 2 * Math.PI) {
+          previousAngle = angle;
+          rotationCount++;
+          rotationCountDisplay.textContent = `Rotations: ${rotationCount}`;
+        }
+      }, 50);
+    }
+
+    function stopRolling() {
+      clearInterval(interval);
+    }
+
+    toggleButton.addEventListener('click', () => {
+      isRolling = !isRolling;
+      if (isRolling) {
+        toggleButton.textContent = 'Stop Rolling';
+        startRolling();
+      } else {
+        toggleButton.textContent = 'Start Rolling';
+        stopRolling();
+      }
+    });
+
+    draw(); // Initial draw
+  </script>
+</body>
+</html>
