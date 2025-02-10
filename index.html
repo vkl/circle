@@ -65,6 +65,14 @@
       ctx.lineWidth = 2;
       ctx.stroke();
 
+      // Draw mark on Circle B
+      const markBX = centerX - radiusB;
+      const markBY = centerY;
+      ctx.beginPath();
+      ctx.arc(markBX, markBY, 5, 0, 2 * Math.PI);
+      ctx.fillStyle = '#00ff00';
+      ctx.fill();
+
       // Calculate Circle A position on the outside of Circle B
       const xA = centerX - (radiusB + radiusA) * Math.cos(angle);
       const yA = centerY - (radiusB + radiusA) * Math.sin(angle);
