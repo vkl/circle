@@ -54,8 +54,8 @@
       <input type="number" id="radiusBInput" value="150" min="1">
     </label>
   </div>
-  
-  <canvas id="canvas" width="800" height="800"></canvas>
+
+  <canvas id="canvas" width="600" height="600"></canvas>
   <div class="controls">
     <button id="toggleButton">Start Rolling</button>
     <p id="rotationCount">Rotations: 0</p>
@@ -69,14 +69,10 @@
     const radiusAInput = document.getElementById('radiusAInput');
     const radiusBInput = document.getElementById('radiusBInput');
 
-
-    //const radiusA = 50; // 1 unit = 50px
-    //const radiusB = 150; // 3 units = 150px
     let radiusA = parseInt(radiusAInput.value, 10);
     let radiusB = parseInt(radiusBInput.value, 10);
-    
-    const centerX = 400;
-    const centerY = 400;
+    const centerX = 300;
+    const centerY = 300;
     let angle = 0;
     let rotationAngle = 0;
     let rotationCount = 0;
@@ -93,17 +89,9 @@
       ctx.lineWidth = 2;
       ctx.stroke();
 
-      // Draw mark on Circle B
-      const markBX = centerX - radiusB;
-      const markBY = centerY;
-      ctx.beginPath();
-      ctx.arc(markBX, markBY, 5, 0, 2 * Math.PI);
-      ctx.fillStyle = '#00ff00';
-      ctx.fill();
-
       // Calculate Circle A position on the outside of Circle B
-      const xA = centerX - (radiusB + radiusA) * Math.cos(angle);
-      const yA = centerY - (radiusB + radiusA) * Math.sin(angle);
+      const xA = centerX + (radiusB + radiusA) * Math.cos(angle);
+      const yA = centerY + (radiusB + radiusA) * Math.sin(angle);
 
       // Draw Circle A
       ctx.beginPath();
@@ -127,10 +115,13 @@
         rotationAngle += 0.02 * (radiusB / radiusA + 1); // Adjust rotation speed based on radius
         draw();
 
-        if (rotationAngle >= 2 * Math.PI) {
-          rotationAngle -= 2 * Math.PI;
+        if (angle >= 2 * Math.PI) {
+          angle -= 2 * Math.PI;
           rotationCount++;
           rotationCountDisplay.textContent = `Rotations: ${rotationCount}`;
+          stopRolling(); // Stop after one full rotation
+          toggleButton.textContent = 'Start Rolling';
+          isRolling = false;
         }
       }, 50);
     }
@@ -138,16 +129,6 @@
     function stopRolling() {
       clearInterval(interval);
     }
-
-    radiusAInput.addEventListener('input', () => {
-      radiusA = parseInt(radiusAInput.value, 10) || 1;
-      draw();
-    });
-
-    radiusBInput.addEventListener('input', () => {
-      radiusB = parseInt(radiusBInput.value, 10) || 1;
-      draw();
-    });
 
     toggleButton.addEventListener('click', () => {
       isRolling = !isRolling;
@@ -158,6 +139,16 @@
         toggleButton.textContent = 'Start Rolling';
         stopRolling();
       }
+    });
+
+    radiusAInput.addEventListener('input', () => {
+      radiusA = parseInt(radiusAInput.value, 10) || 1;
+      draw();
+    });
+
+    radiusBInput.addEventListener('input', () => {
+      radiusB = parseInt(radiusBInput.value, 10) || 1;
+      draw();
     });
 
     draw(); // Initial draw
