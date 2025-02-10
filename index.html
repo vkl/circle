@@ -140,6 +140,7 @@
           stopRolling(); // Stop after one full rotation
           toggleButton.textContent = 'Start Rolling';
           isRolling = false;
+          rstButton.removeAttribute("disabled");
         }
 
         if (isRolling) {
