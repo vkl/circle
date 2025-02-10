@@ -139,6 +139,16 @@
       clearInterval(interval);
     }
 
+    radiusAInput.addEventListener('input', () => {
+      radiusA = parseInt(radiusAInput.value, 10) || 1;
+      draw();
+    });
+
+    radiusBInput.addEventListener('input', () => {
+      radiusB = parseInt(radiusBInput.value, 10) || 1;
+      draw();
+    });
+
     toggleButton.addEventListener('click', () => {
       isRolling = !isRolling;
       if (isRolling) {
