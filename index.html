@@ -141,6 +141,8 @@
           toggleButton.textContent = 'Start Rolling';
           isRolling = false;
           rstButton.removeAttribute("disabled");
+          rotationCount = (Math.ceil(rotationTotalAngle) / 360).toFixed(2);
+          rotationCountDisplay.textContent = `Rotations: ${rotationCount}`;
         }
 
         if (isRolling) {
