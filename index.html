@@ -57,15 +57,19 @@
 
   <canvas id="canvas" width="600" height="600"></canvas>
   <div class="controls">
+    <button id="rstButton">Reset</button>
     <button id="toggleButton">Start Rolling</button>
     <p id="rotationCount">Rotations: 0</p>
+    <p id="totalRotationAngle">Total angle: 0</p>
   </div>
 
   <script>
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
     const toggleButton = document.getElementById('toggleButton');
+    const rstButton = document.getElementById('rstButton');
     const rotationCountDisplay = document.getElementById('rotationCount');
+    const totalRotationAngle = document.getElementById('totalRotationAngle');
     const radiusAInput = document.getElementById('radiusAInput');
     const radiusBInput = document.getElementById('radiusBInput');
 
@@ -76,6 +80,7 @@
     let angle = 0;
     let rotationAngle = 0;
     let rotationCount = 0;
+    let rotationTotalAngle = 0;
     let isRolling = false;
     let interval;
 
@@ -103,6 +108,7 @@
       // Draw mark on Circle A
       const markX = xA + radiusA * Math.cos(rotationAngle);
       const markY = yA + radiusA * Math.sin(rotationAngle);
+      console.log(markX + " " + markY + " " + rotationAngle);
       ctx.beginPath();
       ctx.arc(markX, markY, 5, 0, 2 * Math.PI);
       ctx.fillStyle = '#ff0000';
@@ -119,8 +125,8 @@
 
     function startRolling() {
       interval = setInterval(() => {
-        angle += 0.02;
-        rotationAngle += 0.02 * (radiusB / radiusA + 1); // Adjust rotation speed based on radius
+        angle += 0.01;
+        rotationAngle += 0.01 * (radiusB / radiusA + 1); // Adjust rotation speed based on radius
         draw();
 
         if (rotationAngle >= 2 * Math.PI) {
@@ -135,7 +141,13 @@
           toggleButton.textContent = 'Start Rolling';
           isRolling = false;
         }
-      }, 25);
+
+        if (isRolling) {
+            rotationTotalAngle += (0.01 * (radiusB / radiusA + 1) * 180 / Math.PI);
+            totalRotationAngle.textContent = `Total angle: ${Math.ceil(rotationTotalAngle)}`;
+        }
+
+      }, 10);
     }
 
     function stopRolling() {
@@ -146,24 +158,46 @@
       isRolling = !isRolling;
       if (isRolling) {
         toggleButton.textContent = 'Stop Rolling';
+        rstButton.setAttribute("disabled", true);
         startRolling();
       } else {
         toggleButton.textContent = 'Start Rolling';
+        rstButton.removeAttribute("disabled");
         stopRolling();
       }
     });
 
+    rstButton.addEventListener('click', () => {
+      rotationCount = 0;
+      rotationTotalAngle = 0;
+      rotationAngle = 0;
+      angle = 0;
+      rotationCountDisplay.textContent = `Rotations: ${rotationCount}`;
+      totalRotationAngle.textContent = `Total angle: ${Math.ceil(rotationTotalAngle)}`;
+      draw();
+    });
+
     radiusAInput.addEventListener('input', () => {
       radiusA = parseInt(radiusAInput.value, 10) || 1;
+      radiusB = parseInt(radiusBInput.value, 10) || 1;
       rotationCount = 0;
+      rotationTotalAngle = 0;
+      rotationAngle = 0;
+      angle = 0;
       rotationCountDisplay.textContent = `Rotations: ${rotationCount}`;
+      totalRotationAngle.textContent = `Total angle: ${Math.ceil(rotationTotalAngle)}`;
       draw();
     });
 
     radiusBInput.addEventListener('input', () => {
       radiusB = parseInt(radiusBInput.value, 10) || 1;
+      radiusB = parseInt(radiusBInput.value, 10) || 1;
       rotationCount = 0;
+      rotationTotalAngle = 0;
+      rotationAngle = 0;
+      angle = 0;
       rotationCountDisplay.textContent = `Rotations: ${rotationCount}`;
+      totalRotationAngle.textContent = `Total angle: ${Math.ceil(rotationTotalAngle)}`;
       draw();
     });
 
