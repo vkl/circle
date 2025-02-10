@@ -90,8 +90,8 @@
       ctx.stroke();
 
       // Calculate Circle A position on the outside of Circle B
-      const xA = centerX + (radiusB + radiusA) * Math.cos(angle);
-      const yA = centerY + (radiusB + radiusA) * Math.sin(angle);
+      const xA = centerX - (radiusB + radiusA) * Math.cos(angle);
+      const yA = centerY - (radiusB + radiusA) * Math.sin(angle);
 
       // Draw Circle A
       ctx.beginPath();
@@ -107,6 +107,14 @@
       ctx.arc(markX, markY, 5, 0, 2 * Math.PI);
       ctx.fillStyle = '#ff0000';
       ctx.fill();
+
+      // Draw mark on Circle B
+      const markBX = centerX - radiusB;
+      const markBY = centerY;
+      ctx.beginPath();
+      ctx.arc(markBX, markBY, 5, 0, 2 * Math.PI);
+      ctx.fillStyle = '#00ff00';
+      ctx.fill();
     }
 
     function startRolling() {
@@ -115,15 +123,19 @@
         rotationAngle += 0.02 * (radiusB / radiusA + 1); // Adjust rotation speed based on radius
         draw();
 
+        if (rotationAngle >= 2 * Math.PI) {
+            rotationAngle -= 2 * Math.PI;
+            rotationCount++;
+            rotationCountDisplay.textContent = `Rotations: ${rotationCount}`;
+        }
+
         if (angle >= 2 * Math.PI) {
           angle -= 2 * Math.PI;
-          rotationCount++;
-          rotationCountDisplay.textContent = `Rotations: ${rotationCount}`;
           stopRolling(); // Stop after one full rotation
           toggleButton.textContent = 'Start Rolling';
           isRolling = false;
         }
-      }, 50);
+      }, 25);
     }
 
     function stopRolling() {
@@ -143,11 +155,15 @@
 
     radiusAInput.addEventListener('input', () => {
       radiusA = parseInt(radiusAInput.value, 10) || 1;
+      rotationCount = 0;
+      rotationCountDisplay.textContent = `Rotations: ${rotationCount}`;
       draw();
     });
 
     radiusBInput.addEventListener('input', () => {
       radiusB = parseInt(radiusBInput.value, 10) || 1;
+      rotationCount = 0;
+      rotationCountDisplay.textContent = `Rotations: ${rotationCount}`;
       draw();
     });
 
