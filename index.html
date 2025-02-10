@@ -124,7 +124,7 @@
     function startRolling() {
       interval = setInterval(() => {
         angle += 0.02;
-        rotationAngle += 0.06; // Adjust rotation speed to simulate rolling
+        rotationAngle += 0.02 * (radiusB + radiusA) / radiusA; // Adjust rotation speed based on radius
         draw();
 
         if (rotationAngle >= 2 * Math.PI) {
