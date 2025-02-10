@@ -50,6 +50,7 @@
     const centerX = 300;
     const centerY = 300;
     let angle = 0;
+    let rotationAngle = 0;
     let rotationCount = 0;
     let isRolling = false;
     let interval;
@@ -75,17 +76,11 @@
       ctx.lineWidth = 2;
       ctx.stroke();
 
-      // Draw mark connecting Circle A and Circle B
+      // Draw mark on Circle A
+      const markX = xA + radiusA * Math.cos(rotationAngle);
+      const markY = yA + radiusA * Math.sin(rotationAngle);
       ctx.beginPath();
-      ctx.moveTo(centerX, centerY);
-      ctx.lineTo(xA, yA);
-      ctx.strokeStyle = '#ff0000';
-      ctx.lineWidth = 2;
-      ctx.stroke();
-
-      // Draw mark at the contact point
-      ctx.beginPath();
-      ctx.arc(xA, yA, 5, 0, 2 * Math.PI);
+      ctx.arc(markX, markY, 5, 0, 2 * Math.PI);
       ctx.fillStyle = '#ff0000';
       ctx.fill();
     }
@@ -93,28 +88,29 @@
     function startRolling() {
       interval = setInterval(() => {
         angle += 0.02;
+        rotationAngle += 0.06; // Adjust rotation speed to simulate rolling
         draw();
 
-        if (angle >= 2 * Math.PI) {
-          clearInterval(interval);
-          isRolling = false;
-          toggleButton.textContent = 'Start Rolling';
+        if (rotationAngle >= 2 * Math.PI) {
+          rotationAngle -= 2 * Math.PI;
           rotationCount++;
           rotationCountDisplay.textContent = `Rotations: ${rotationCount}`;
         }
       }, 50);
     }
 
+    function stopRolling() {
+      clearInterval(interval);
+    }
+
     toggleButton.addEventListener('click', () => {
-      if (!isRolling) {
-        isRolling = true;
-        angle = 0;
+      isRolling = !isRolling;
+      if (isRolling) {
         toggleButton.textContent = 'Stop Rolling';
         startRolling();
       } else {
-        clearInterval(interval);
-        isRolling = false;
         toggleButton.textContent = 'Start Rolling';
+        stopRolling();
       }
     });
 
