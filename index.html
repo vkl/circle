@@ -50,7 +50,7 @@
     const centerX = 300;
     const centerY = 300;
     let angle = 0;
-    let previousAngle = 0;
+    let rotationAngle = 0;
     let rotationCount = 0;
     let isRolling = false;
     let interval;
@@ -65,9 +65,9 @@
       ctx.lineWidth = 2;
       ctx.stroke();
 
-      // Calculate Circle A position
-      const xA = centerX + (radiusB - radiusA) * Math.cos(angle);
-      const yA = centerY + (radiusB - radiusA) * Math.sin(angle);
+      // Calculate Circle A position on the outside of Circle B
+      const xA = centerX + (radiusB + radiusA) * Math.cos(angle);
+      const yA = centerY + (radiusB + radiusA) * Math.sin(angle);
 
       // Draw Circle A
       ctx.beginPath();
@@ -77,8 +77,8 @@
       ctx.stroke();
 
       // Draw mark on Circle A
-      const markX = xA + radiusA * Math.cos(-angle);
-      const markY = yA + radiusA * Math.sin(-angle);
+      const markX = xA + radiusA * Math.cos(rotationAngle);
+      const markY = yA + radiusA * Math.sin(rotationAngle);
       ctx.beginPath();
       ctx.arc(markX, markY, 5, 0, 2 * Math.PI);
       ctx.fillStyle = '#ff0000';
@@ -87,11 +87,12 @@
 
     function startRolling() {
       interval = setInterval(() => {
-        angle += 0.05;
+        angle += 0.02;
+        rotationAngle += 0.06; // Adjust rotation speed to simulate rolling
         draw();
 
-        if (angle - previousAngle >= 2 * Math.PI) {
-          previousAngle = angle;
+        if (rotationAngle >= 2 * Math.PI) {
+          rotationAngle -= 2 * Math.PI;
           rotationCount++;
           rotationCountDisplay.textContent = `Rotations: ${rotationCount}`;
         }
