@@ -181,14 +181,15 @@
         let dX = (Math.abs(rBX - rAX));
         let dY = (Math.abs(rBY - rAY));
 
-        if (dX < 1 && dY < 1 && flg) {
+        let ratio = 1 - (radiusA / radiusB);
+        if (dX < ratio && dY < ratio && flg) {
             console.log(rotationAngle + " " + angle);
             centerViewRotationCount++;
             centerViewRotationCountDisplay.textContent = `Center Point of View - Rotations: ${centerViewRotationCount}`;
             flg = false;
         }
 
-        if (dX > 1 || dY > 1) {
+        if (dX > ratio || dY > ratio) {
           flg = true;
         }
 
