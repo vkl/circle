@@ -68,7 +68,6 @@
   </div>
   <div class="data">
     <p id="rotationCount">Rotations: 0</p>
-    <p id="totalRotationAngle">Total angle: 0</p>
     <p id="rotationCountCenterView">Center Point of View - Rotations: 0</p>
   </div>
 
@@ -79,7 +78,7 @@
     const rstButton = document.getElementById('rstButton');
     const rotationCountDisplay = document.getElementById('rotationCount');
     const centerViewRotationCountDisplay = document.getElementById('rotationCountCenterView');
-    const totalRotationAngle = document.getElementById('totalRotationAngle');
+    //const totalRotationAngle = document.getElementById('totalRotationAngle');
     const radiusAInput = document.getElementById('radiusAInput');
     const radiusBInput = document.getElementById('radiusBInput');
 
@@ -182,7 +181,7 @@
         let dX = (Math.abs(rBX - rAX));
         let dY = (Math.abs(rBY - rAY));
 
-        if (dX < 0.6 && dY < 0.6 && flg) {
+        if (dX < 1 && dY < 1 && flg) {
             console.log(rotationAngle + " " + angle);
             centerViewRotationCount++;
             centerViewRotationCountDisplay.textContent = `Center Point of View - Rotations: ${centerViewRotationCount}`;
@@ -206,13 +205,11 @@
           isRolling = false;
           flg = false;
           rstButton.removeAttribute("disabled");
-          rotationCount = (Math.ceil(rotationTotalAngle) / 360);
-          rotationCountDisplay.textContent = `Rotations: ${rotationCount}`;
         }
 
         if (isRolling) {
-            rotationTotalAngle += (0.01 * (radiusB / radiusA + 1) * 180 / Math.PI);
-            totalRotationAngle.textContent = `Total angle: ${Math.ceil(rotationTotalAngle)}`;
+            //rotationTotalAngle += (0.01 * (radiusB / radiusA + 1) * 180 / Math.PI);
+            //totalRotationAngle.textContent = `Total angle: ${Math.ceil(rotationTotalAngle)}`;
         }
 
       }, 10);
@@ -238,11 +235,11 @@
     rstButton.addEventListener('click', () => {
       rotationCount = 0;
       centerViewRotationCount = 0;
-      rotationTotalAngle = 0;
+      //rotationTotalAngle = 0;
       rotationAngle = 0;
       angle = 0;
       rotationCountDisplay.textContent = `Rotations: ${rotationCount}`;
-      totalRotationAngle.textContent = `Total angle: ${Math.ceil(rotationTotalAngle)}`;
+      //totalRotationAngle.textContent = `Total angle: ${Math.ceil(rotationTotalAngle)}`;
       centerViewRotationCountDisplay.textContent = `Center Point of View - Rotations: ${centerViewRotationCount}`;
       draw();
     });
@@ -252,11 +249,11 @@
       radiusB = parseInt(radiusBInput.value, 10) || 1;
       rotationCount = 0;
       centerViewRotationCount = 0;
-      rotationTotalAngle = 0;
+      //rotationTotalAngle = 0;
       rotationAngle = 0;
       angle = 0;
       rotationCountDisplay.textContent = `Rotations: ${rotationCount}`;
-      totalRotationAngle.textContent = `Total angle: ${Math.ceil(rotationTotalAngle)}`;
+      //totalRotationAngle.textContent = `Total angle: ${Math.ceil(rotationTotalAngle)}`;
       centerViewRotationCountDisplay.textContent = `Center Point of View - Rotations: ${centerViewRotationCount}`;
       draw();
     });
@@ -266,11 +263,11 @@
       radiusB = parseInt(radiusBInput.value, 10) || 1;
       rotationCount = 0;
       centerViewRotationCount = 0;
-      rotationTotalAngle = 0;
+      //rotationTotalAngle = 0;
       rotationAngle = 0;
       angle = 0;
       rotationCountDisplay.textContent = `Rotations: ${rotationCount}`;
-      totalRotationAngle.textContent = `Total angle: ${Math.ceil(rotationTotalAngle)}`;
+      //totalRotationAngle.textContent = `Total angle: ${Math.ceil(rotationTotalAngle)}`;
       centerViewRotationCountDisplay.textContent = `Center Point of View - Rotations: ${centerViewRotationCount}`;
       draw();
     });
