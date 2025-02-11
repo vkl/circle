@@ -25,6 +25,12 @@
       align-items: center;
       gap: 10px;
     }
+    .data {
+      margin-top: 10px;
+      display:inline;
+      align-items: center;
+      gap: 10px;
+    }
     .inputs {
       display: flex;
       flex-direction: column;
@@ -59,8 +65,11 @@
   <div class="controls">
     <button id="rstButton">Reset</button>
     <button id="toggleButton">Start Rolling</button>
+  </div>
+  <div class="data">
     <p id="rotationCount">Rotations: 0</p>
     <p id="totalRotationAngle">Total angle: 0</p>
+    <p id="rotationCountCenterView">Center Point of View - Rotations: 0</p>
   </div>
 
   <script>
@@ -69,6 +78,7 @@
     const toggleButton = document.getElementById('toggleButton');
     const rstButton = document.getElementById('rstButton');
     const rotationCountDisplay = document.getElementById('rotationCount');
+    const centerViewRotationCountDisplay = document.getElementById('rotationCountCenterView');
     const totalRotationAngle = document.getElementById('totalRotationAngle');
     const radiusAInput = document.getElementById('radiusAInput');
     const radiusBInput = document.getElementById('radiusBInput');
@@ -81,8 +91,18 @@
     let rotationAngle = 0;
     let rotationCount = 0;
     let rotationTotalAngle = 0;
+    let centerViewRotationCount = 0;
     let isRolling = false;
     let interval;
+    let flg = false;
+
+    let xA;
+    let yA;
+
+    let rBX;
+    let rBY;
+    let rAX;
+    let rAY;
 
     function draw() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -100,9 +120,18 @@
       ctx.fillStyle = '#000';
       ctx.fill();
 
+      // Draw radius B
+      ctx.beginPath();
+      ctx.lineWidth = 1;
+      ctx.moveTo(centerX, centerY);
+      rBX = centerX - radiusB * Math.cos(angle);
+      rBY = centerY - radiusB * Math.sin(angle);
+      ctx.lineTo(rBX, rBY);
+      ctx.stroke();
+
       // Calculate Circle A position on the outside of Circle B
-      const xA = centerX - (radiusB + radiusA) * Math.cos(angle);
-      const yA = centerY - (radiusB + radiusA) * Math.sin(angle);
+      xA = centerX - (radiusB + radiusA) * Math.cos(angle);
+      yA = centerY - (radiusB + radiusA) * Math.sin(angle);
 
       // Draw Circle A
       ctx.beginPath();
@@ -121,13 +150,15 @@
       ctx.beginPath();
       ctx.lineWidth = 1;
       ctx.moveTo(xA, yA);
-      ctx.lineTo(xA + radiusA * Math.cos(rotationAngle), yA + radiusA * Math.sin(rotationAngle));
+      rAX = xA + radiusA * Math.cos(rotationAngle);
+      rAY = yA + radiusA * Math.sin(rotationAngle);
+      ctx.lineTo(rAX, rAY);
       ctx.stroke();
 
       // Draw mark on Circle A
       const markX = xA + radiusA * Math.cos(rotationAngle);
       const markY = yA + radiusA * Math.sin(rotationAngle);
-      console.log(markX + " " + markY + " " + rotationAngle);
+      //console.log(markX + " " + markY + " " + rotationAngle);
       ctx.beginPath();
       ctx.arc(markX, markY, 5, 0, 2 * Math.PI);
       ctx.fillStyle = '#ff0000';
@@ -148,6 +179,20 @@
         rotationAngle += 0.01 * (radiusB / radiusA + 1); // Adjust rotation speed based on radius
         draw();
 
+        let dX = (Math.abs(rBX - rAX));
+        let dY = (Math.abs(rBY - rAY));
+
+        if (dX < 0.6 && dY < 0.6 && flg) {
+            console.log(rotationAngle + " " + angle);
+            centerViewRotationCount++;
+            centerViewRotationCountDisplay.textContent = `Center Point of View - Rotations: ${centerViewRotationCount}`;
+            flg = false;
+        }
+
+        if (dX > 1 || dY > 1) {
+          flg = true;
+        }
+
         if (rotationAngle >= 2 * Math.PI) {
             rotationAngle -= 2 * Math.PI;
             rotationCount++;
@@ -159,8 +204,9 @@
           stopRolling(); // Stop after one full rotation
           toggleButton.textContent = 'Start Rolling';
           isRolling = false;
+          flg = false;
           rstButton.removeAttribute("disabled");
-          rotationCount = (Math.ceil(rotationTotalAngle) / 360).toFixed(2);
+          rotationCount = (Math.ceil(rotationTotalAngle) / 360);
           rotationCountDisplay.textContent = `Rotations: ${rotationCount}`;
         }
 
@@ -191,11 +237,13 @@
 
     rstButton.addEventListener('click', () => {
       rotationCount = 0;
+      centerViewRotationCount = 0;
       rotationTotalAngle = 0;
       rotationAngle = 0;
       angle = 0;
       rotationCountDisplay.textContent = `Rotations: ${rotationCount}`;
       totalRotationAngle.textContent = `Total angle: ${Math.ceil(rotationTotalAngle)}`;
+      centerViewRotationCountDisplay.textContent = `Center Point of View - Rotations: ${centerViewRotationCount}`;
       draw();
     });
 
@@ -203,11 +251,13 @@
       radiusA = parseInt(radiusAInput.value, 10) || 1;
       radiusB = parseInt(radiusBInput.value, 10) || 1;
       rotationCount = 0;
+      centerViewRotationCount = 0;
       rotationTotalAngle = 0;
       rotationAngle = 0;
       angle = 0;
       rotationCountDisplay.textContent = `Rotations: ${rotationCount}`;
       totalRotationAngle.textContent = `Total angle: ${Math.ceil(rotationTotalAngle)}`;
+      centerViewRotationCountDisplay.textContent = `Center Point of View - Rotations: ${centerViewRotationCount}`;
       draw();
     });
 
@@ -215,11 +265,13 @@
       radiusB = parseInt(radiusBInput.value, 10) || 1;
       radiusB = parseInt(radiusBInput.value, 10) || 1;
       rotationCount = 0;
+      centerViewRotationCount = 0;
       rotationTotalAngle = 0;
       rotationAngle = 0;
       angle = 0;
       rotationCountDisplay.textContent = `Rotations: ${rotationCount}`;
       totalRotationAngle.textContent = `Total angle: ${Math.ceil(rotationTotalAngle)}`;
+      centerViewRotationCountDisplay.textContent = `Center Point of View - Rotations: ${centerViewRotationCount}`;
       draw();
     });
 
