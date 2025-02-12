@@ -94,6 +94,9 @@
     let isRolling = false;
     let interval;
     let flg = false;
+    let ratio = radiusB / radiusA;
+    let step = ratio < 1 ? ratio * 0.01 : (1 / ratio) * 0.01;
+    console.log(`ratio: ${ratio}, step: ${step}`);
 
     let xA;
     let yA;
@@ -115,7 +118,7 @@
 
       // Draw center B
       ctx.beginPath();
-      ctx.arc(centerX, centerY, 4, 0, 2 * Math.PI);
+      ctx.arc(centerX, centerY, 3, 0, 2 * Math.PI);
       ctx.fillStyle = '#000';
       ctx.fill();
 
@@ -141,7 +144,7 @@
 
       // Draw center A
       ctx.beginPath();
-      ctx.arc(xA, yA, 4, 0, 2 * Math.PI);
+      ctx.arc(xA, yA, 3, 0, 2 * Math.PI);
       ctx.fillStyle = '#007bff';
       ctx.fill();
 
@@ -159,7 +162,7 @@
       const markY = yA + radiusA * Math.sin(rotationAngle);
       //console.log(markX + " " + markY + " " + rotationAngle);
       ctx.beginPath();
-      ctx.arc(markX, markY, 5, 0, 2 * Math.PI);
+      ctx.arc(markX, markY, 3, 0, 2 * Math.PI);
       ctx.fillStyle = '#ff0000';
       ctx.fill();
 
@@ -167,29 +170,29 @@
       const markBX = centerX - radiusB;
       const markBY = centerY;
       ctx.beginPath();
-      ctx.arc(markBX, markBY, 5, 0, 2 * Math.PI);
+      ctx.arc(markBX, markBY, 3, 0, 2 * Math.PI);
       ctx.fillStyle = '#00ff00';
       ctx.fill();
     }
 
     function startRolling() {
       interval = setInterval(() => {
-        angle += 0.01;
-        rotationAngle += 0.01 * (radiusB / radiusA + 1); // Adjust rotation speed based on radius
+        angle += step;
+        rotationAngle += step * (radiusB / radiusA + 1); // Adjust rotation speed based on radius
         draw();
 
         let dX = (Math.abs(rBX - rAX));
         let dY = (Math.abs(rBY - rAY));
 
-        let ratio = 1 - (radiusA / radiusB);
-        if (dX < ratio && dY < ratio && flg) {
+        //let ratio = 1 - (radiusA / radiusB);
+        if (dX < 1 && dY < 1 && flg) {
             console.log(rotationAngle + " " + angle);
             centerViewRotationCount++;
             centerViewRotationCountDisplay.textContent = `Center Point of View - Rotations: ${centerViewRotationCount}`;
             flg = false;
         }
 
-        if (dX > ratio || dY > ratio) {
+        if (dX > 1 || dY > 1) {
           flg = true;
         }
 
@@ -213,7 +216,7 @@
             //totalRotationAngle.textContent = `Total angle: ${Math.ceil(rotationTotalAngle)}`;
         }
 
-      }, 10);
+      }, 2);
     }
 
     function stopRolling() {
@@ -248,6 +251,9 @@
     radiusAInput.addEventListener('input', () => {
       radiusA = parseInt(radiusAInput.value, 10) || 1;
       radiusB = parseInt(radiusBInput.value, 10) || 1;
+      ratio = radiusB / radiusA;
+      step = ratio < 1 ? ratio * 0.01 : (1 / ratio) * 0.01;
+      console.log(`ratio: ${ratio}, step: ${step}`);
       rotationCount = 0;
       centerViewRotationCount = 0;
       //rotationTotalAngle = 0;
@@ -262,6 +268,9 @@
     radiusBInput.addEventListener('input', () => {
       radiusB = parseInt(radiusBInput.value, 10) || 1;
       radiusB = parseInt(radiusBInput.value, 10) || 1;
+      ratio = radiusB / radiusA;
+      step = ratio < 1 ? ratio * 0.01 : (1 / ratio) * 0.01;
+      console.log(`ratio: ${ratio}, step: ${step}`);
       rotationCount = 0;
       centerViewRotationCount = 0;
       //rotationTotalAngle = 0;
