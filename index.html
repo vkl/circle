@@ -1,288 +1,280 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Rolling Circle Visualization</title>
-  <style>
-    body {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      margin: 0;
-      font-family: Arial, sans-serif;
-    }
-    canvas {
-      border: 1px solid #000;
-      border-radius: 16px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
-    .controls {
-      margin-top: 20px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .data {
-      margin-top: 10px;
-      display:inline;
-      align-items: center;
-      gap: 10px;
-    }
-    .inputs {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      margin-bottom: 20px;
-    }
-    input {
-      padding: 5px;
-      font-size: 16px;
-      width: 150px;
-    }
-    button {
-      padding: 10px 20px;
-      font-size: 16px;
-      cursor: pointer;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rolling Circle Visualization</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        canvas {
+            border: 1px solid #000;
+            border-radius: 16px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .controls {
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .data {
+            margin-top: 10px;
+            display: inline;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .inputs {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        input {
+            padding: 5px;
+            font-size: 16px;
+            width: 150px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
 </head>
+
 <body>
-  <div class="inputs">
-    <label>
-      Radius A (px):
-      <input type="number" id="radiusAInput" value="50" min="1">
-    </label>
-    <label>
-      Radius B (px):
-      <input type="number" id="radiusBInput" value="150" min="1">
-    </label>
-  </div>
+    <div class="inputs">
+        <label>
+            Radius A (px):
+            <input type="number" id="radiusAInput" value="50" min="1">
+        </label>
+        <label>
+            Radius B (px):
+            <input type="number" id="radiusBInput" value="150" min="1">
+        </label>
+    </div>
 
-  <canvas id="canvas" width="600" height="600"></canvas>
-  <div class="controls">
-    <button id="rstButton">Reset</button>
-    <button id="toggleButton">Start Rolling</button>
-  </div>
-  <div class="data">
-    <p id="rotationCount">Rotations: 0</p>
-    <p id="rotationCountCenterView">Center Point of View - Rotations: 0</p>
-  </div>
+    <canvas id="canvas" width="600" height="600"></canvas>
+    <div class="controls">
+        <button id="rstButton">Reset</button>
+        <button id="toggleButton">Start Rolling</button>
+    </div>
+    <div class="data">
+        <p id="rotationCount">Rotations: 0</p>
+        <p id="rotationCountCenterView">Center Point of View - Rotations: 0</p>
+    </div>
 
-  <script>
-    const canvas = document.getElementById('canvas');
-    const ctx = canvas.getContext('2d');
-    const toggleButton = document.getElementById('toggleButton');
-    const rstButton = document.getElementById('rstButton');
-    const rotationCountDisplay = document.getElementById('rotationCount');
-    const centerViewRotationCountDisplay = document.getElementById('rotationCountCenterView');
-    //const totalRotationAngle = document.getElementById('totalRotationAngle');
-    const radiusAInput = document.getElementById('radiusAInput');
-    const radiusBInput = document.getElementById('radiusBInput');
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const toggleButton = document.getElementById('toggleButton');
+        const rstButton = document.getElementById('rstButton');
+        const rotationCountDisplay = document.getElementById('rotationCount');
+        const centerViewRotationCountDisplay = document.getElementById('rotationCountCenterView');
+        //const totalRotationAngle = document.getElementById('totalRotationAngle');
+        const radiusAInput = document.getElementById('radiusAInput');
+        const radiusBInput = document.getElementById('radiusBInput');
 
-    let radiusA = parseInt(radiusAInput.value, 10);
-    let radiusB = parseInt(radiusBInput.value, 10);
-    const centerX = 300;
-    const centerY = 300;
-    let angle = 0;
-    let rotationAngle = 0;
-    let rotationCount = 0;
-    let rotationTotalAngle = 0;
-    let centerViewRotationCount = 0;
-    let isRolling = false;
-    let interval;
-    let flg = false;
-    let ratio = radiusB / radiusA;
-    let step = ratio < 1 ? ratio * 0.01 : (1 / ratio) * 0.01;
-    console.log(`ratio: ${ratio}, step: ${step}`);
+        let radiusA = parseInt(radiusAInput.value, 10);
+        let radiusB = parseInt(radiusBInput.value, 10);
+        const centerX = 300;
+        const centerY = 300;
+        let angle = 0;
+        let rotationAngle = 0;
+        let rotationAngle2 = 0;
+        let rotationCount = 0;
+        let rotationTotalAngle = 0;
+        let centerViewRotationCount = 0;
+        let isRolling = false;
+        let interval;
+        let flg = false;
+        let ratio = radiusB / radiusA;
+        let step = ratio < 1 ? ratio * 0.01 : (1 / ratio) * 0.01;
 
-    let xA;
-    let yA;
+        let xA;
+        let yA;
 
-    let rBX;
-    let rBY;
-    let rAX;
-    let rAY;
+        let rBX;
+        let rBY;
+        let rAX;
+        let rAY;
 
-    function draw() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+        function init() {
+            radiusA = parseInt(radiusAInput.value, 10);
+            radiusB = parseInt(radiusBInput.value, 10);
+            angle = 0;
+            rotationAngle = 0;
+            rotationAngle2 = 0;
+            rotationCount = 0;
+            rotationTotalAngle = 0;
+            centerViewRotationCount = 0;
+            isRolling = false;
+            interval;
+            ratio = radiusB / radiusA;
+            step = ratio < 1 ? ratio * 0.02 : (1 / ratio) * 0.02;
 
-      // Draw Circle B
-      ctx.beginPath();
-      ctx.arc(centerX, centerY, radiusB, 0, 2 * Math.PI);
-      ctx.strokeStyle = '#000';
-      ctx.lineWidth = 2;
-      ctx.stroke();
+            console.log(`radiusA ${radiusA}, radiusB ${radiusB}`);
+            console.log(`ratio: ${ratio}, step: ${step}, angle ${2 * 180 / ratio}`);
+            rotationCountDisplay.textContent = `Rotations: ${rotationCount}`;
+            //totalRotationAngle.textContent = `Total angle: ${Math.ceil(rotationTotalAngle)}`;
+            centerViewRotationCountDisplay.textContent = `Center Point of View - Rotations: ${centerViewRotationCount}`;  
+        }
 
-      // Draw center B
-      ctx.beginPath();
-      ctx.arc(centerX, centerY, 3, 0, 2 * Math.PI);
-      ctx.fillStyle = '#000';
-      ctx.fill();
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // Draw radius B
-      ctx.beginPath();
-      ctx.lineWidth = 1;
-      ctx.moveTo(centerX, centerY);
-      rBX = centerX - radiusB * Math.cos(angle);
-      rBY = centerY - radiusB * Math.sin(angle);
-      ctx.lineTo(rBX, rBY);
-      ctx.stroke();
+            // Draw Circle B
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, radiusB, 0, 2 * Math.PI);
+            ctx.strokeStyle = '#000';
+            ctx.lineWidth = 2;
+            ctx.stroke();
 
-      // Calculate Circle A position on the outside of Circle B
-      xA = centerX - (radiusB + radiusA) * Math.cos(angle);
-      yA = centerY - (radiusB + radiusA) * Math.sin(angle);
+            // Draw center B
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, 3, 0, 2 * Math.PI);
+            ctx.fillStyle = '#000';
+            ctx.fill();
 
-      // Draw Circle A
-      ctx.beginPath();
-      ctx.arc(xA, yA, radiusA, 0, 2 * Math.PI);
-      ctx.strokeStyle = '#007bff';
-      ctx.lineWidth = 2;
-      ctx.stroke();
+            // Draw radius B
+            ctx.beginPath();
+            ctx.lineWidth = 1;
+            ctx.moveTo(centerX, centerY);
+            rBX = centerX - radiusB * Math.cos(angle);
+            rBY = centerY - radiusB * Math.sin(angle);
+            ctx.lineTo(rBX, rBY);
+            ctx.stroke();
 
-      // Draw center A
-      ctx.beginPath();
-      ctx.arc(xA, yA, 3, 0, 2 * Math.PI);
-      ctx.fillStyle = '#007bff';
-      ctx.fill();
+            // Calculate Circle A position on the outside of Circle B
+            xA = centerX - (radiusB + radiusA) * Math.cos(angle);
+            yA = centerY - (radiusB + radiusA) * Math.sin(angle);
 
-      // Draw radius A
-      ctx.beginPath();
-      ctx.lineWidth = 1;
-      ctx.moveTo(xA, yA);
-      rAX = xA + radiusA * Math.cos(rotationAngle);
-      rAY = yA + radiusA * Math.sin(rotationAngle);
-      ctx.lineTo(rAX, rAY);
-      ctx.stroke();
+            // Draw Circle A
+            ctx.beginPath();
+            ctx.arc(xA, yA, radiusA, 0, 2 * Math.PI);
+            ctx.strokeStyle = '#007bff';
+            ctx.lineWidth = 2;
+            ctx.stroke();
 
-      // Draw mark on Circle A
-      const markX = xA + radiusA * Math.cos(rotationAngle);
-      const markY = yA + radiusA * Math.sin(rotationAngle);
-      //console.log(markX + " " + markY + " " + rotationAngle);
-      ctx.beginPath();
-      ctx.arc(markX, markY, 3, 0, 2 * Math.PI);
-      ctx.fillStyle = '#ff0000';
-      ctx.fill();
+            // Draw center A
+            ctx.beginPath();
+            ctx.arc(xA, yA, 3, 0, 2 * Math.PI);
+            ctx.fillStyle = '#007bff';
+            ctx.fill();
 
-      // Draw mark on Circle B
-      const markBX = centerX - radiusB;
-      const markBY = centerY;
-      ctx.beginPath();
-      ctx.arc(markBX, markBY, 3, 0, 2 * Math.PI);
-      ctx.fillStyle = '#00ff00';
-      ctx.fill();
-    }
+            // Draw radius A
+            ctx.beginPath();
+            ctx.lineWidth = 1;
+            ctx.moveTo(xA, yA);
+            rAX = xA + radiusA * Math.cos(rotationAngle);
+            rAY = yA + radiusA * Math.sin(rotationAngle);
+            ctx.lineTo(rAX, rAY);
+            ctx.stroke();
 
-    function startRolling() {
-      interval = setInterval(() => {
-        angle += step;
-        rotationAngle += step * (radiusB / radiusA + 1); // Adjust rotation speed based on radius
+            // Draw mark on Circle A
+            const markX = xA + radiusA * Math.cos(rotationAngle);
+            const markY = yA + radiusA * Math.sin(rotationAngle);
+            //console.log(markX + " " + markY + " " + rotationAngle);
+            ctx.beginPath();
+            ctx.arc(markX, markY, 3, 0, 2 * Math.PI);
+            ctx.fillStyle = '#ff0000';
+            ctx.fill();
+
+            // Draw mark on Circle B
+            const markBX = centerX - radiusB;
+            const markBY = centerY;
+            ctx.beginPath();
+            ctx.arc(markBX, markBY, 3, 0, 2 * Math.PI);
+            ctx.fillStyle = '#00ff00';
+            ctx.fill();
+        }
+
+        function startRolling() {
+            interval = setInterval(() => {
+                angle += step;
+                rotationAngle += step * (radiusB / radiusA + 1); // Adjust rotation speed based on radius
+                rotationAngle2 += step;
+                draw();
+
+                if (rotationAngle >= 2 * Math.PI) {
+                    rotationAngle -= 2 * Math.PI;
+                    rotationCount++;
+                    rotationCountDisplay.textContent = `Rotations: ${rotationCount}`;
+                }
+
+                if (rotationAngle2 >= (2 * Math.PI / ratio)) {
+                    rotationAngle2 -= 2 * Math.PI / ratio;
+                    centerViewRotationCount++;
+                    centerViewRotationCountDisplay.textContent = `Center Point of View - Rotations: ${centerViewRotationCount}`;
+                }
+
+                if (angle >= 2 * Math.PI) {
+                    angle -= 2 * Math.PI;
+                    stopRolling(); // Stop after one full rotation
+                    toggleButton.textContent = 'Start Rolling';
+                    isRolling = false;
+                    rstButton.removeAttribute("disabled");
+                }
+
+                if (isRolling) {
+                    //rotationTotalAngle += (0.01 * (radiusB / radiusA + 1) * 180 / Math.PI);
+                    //totalRotationAngle.textContent = `Total angle: ${Math.ceil(rotationTotalAngle)}`;
+                }
+
+            }, 2);
+        }
+
+        function stopRolling() {
+            clearInterval(interval);
+        }
+
+        toggleButton.addEventListener('click', () => {
+            isRolling = !isRolling;
+            if (isRolling) {
+                toggleButton.textContent = 'Stop Rolling';
+                rstButton.setAttribute("disabled", true);
+                startRolling();
+            } else {
+                toggleButton.textContent = 'Start Rolling';
+                rstButton.removeAttribute("disabled");
+                stopRolling();
+            }
+        });
+
+        rstButton.addEventListener('click', () => {
+            init();
+            draw();
+        });
+
+        radiusAInput.addEventListener('input', () => {
+            init();
+            draw();
+        });
+
+        radiusBInput.addEventListener('input', () => {
+            init();
+            draw();
+        });
+
+        init();
         draw();
 
-        let dX = (Math.abs(rBX - rAX));
-        let dY = (Math.abs(rBY - rAY));
-
-        //let ratio = 1 - (radiusA / radiusB);
-        if (dX < 1 && dY < 1 && flg) {
-            console.log(rotationAngle + " " + angle);
-            centerViewRotationCount++;
-            centerViewRotationCountDisplay.textContent = `Center Point of View - Rotations: ${centerViewRotationCount}`;
-            flg = false;
-        }
-
-        if (dX > 1 || dY > 1) {
-          flg = true;
-        }
-
-        if (rotationAngle >= 2 * Math.PI) {
-            rotationAngle -= 2 * Math.PI;
-            rotationCount++;
-            rotationCountDisplay.textContent = `Rotations: ${rotationCount}`;
-        }
-
-        if (angle >= 2 * Math.PI) {
-          angle -= 2 * Math.PI;
-          stopRolling(); // Stop after one full rotation
-          toggleButton.textContent = 'Start Rolling';
-          isRolling = false;
-          flg = false;
-          rstButton.removeAttribute("disabled");
-        }
-
-        if (isRolling) {
-            //rotationTotalAngle += (0.01 * (radiusB / radiusA + 1) * 180 / Math.PI);
-            //totalRotationAngle.textContent = `Total angle: ${Math.ceil(rotationTotalAngle)}`;
-        }
-
-      }, 2);
-    }
-
-    function stopRolling() {
-      clearInterval(interval);
-    }
-
-    toggleButton.addEventListener('click', () => {
-      isRolling = !isRolling;
-      if (isRolling) {
-        toggleButton.textContent = 'Stop Rolling';
-        rstButton.setAttribute("disabled", true);
-        startRolling();
-      } else {
-        toggleButton.textContent = 'Start Rolling';
-        rstButton.removeAttribute("disabled");
-        stopRolling();
-      }
-    });
-
-    rstButton.addEventListener('click', () => {
-      rotationCount = 0;
-      centerViewRotationCount = 0;
-      //rotationTotalAngle = 0;
-      rotationAngle = 0;
-      angle = 0;
-      rotationCountDisplay.textContent = `Rotations: ${rotationCount}`;
-      //totalRotationAngle.textContent = `Total angle: ${Math.ceil(rotationTotalAngle)}`;
-      centerViewRotationCountDisplay.textContent = `Center Point of View - Rotations: ${centerViewRotationCount}`;
-      draw();
-    });
-
-    radiusAInput.addEventListener('input', () => {
-      radiusA = parseInt(radiusAInput.value, 10) || 1;
-      radiusB = parseInt(radiusBInput.value, 10) || 1;
-      ratio = radiusB / radiusA;
-      step = ratio < 1 ? ratio * 0.01 : (1 / ratio) * 0.01;
-      console.log(`ratio: ${ratio}, step: ${step}`);
-      rotationCount = 0;
-      centerViewRotationCount = 0;
-      //rotationTotalAngle = 0;
-      rotationAngle = 0;
-      angle = 0;
-      rotationCountDisplay.textContent = `Rotations: ${rotationCount}`;
-      //totalRotationAngle.textContent = `Total angle: ${Math.ceil(rotationTotalAngle)}`;
-      centerViewRotationCountDisplay.textContent = `Center Point of View - Rotations: ${centerViewRotationCount}`;
-      draw();
-    });
-
-    radiusBInput.addEventListener('input', () => {
-      radiusB = parseInt(radiusBInput.value, 10) || 1;
-      radiusB = parseInt(radiusBInput.value, 10) || 1;
-      ratio = radiusB / radiusA;
-      step = ratio < 1 ? ratio * 0.01 : (1 / ratio) * 0.01;
-      console.log(`ratio: ${ratio}, step: ${step}`);
-      rotationCount = 0;
-      centerViewRotationCount = 0;
-      //rotationTotalAngle = 0;
-      rotationAngle = 0;
-      angle = 0;
-      rotationCountDisplay.textContent = `Rotations: ${rotationCount}`;
-      //totalRotationAngle.textContent = `Total angle: ${Math.ceil(rotationTotalAngle)}`;
-      centerViewRotationCountDisplay.textContent = `Center Point of View - Rotations: ${centerViewRotationCount}`;
-      draw();
-    });
-
-    draw(); // Initial draw
-  </script>
+    </script>
 </body>
+
 </html>
